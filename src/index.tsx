@@ -308,11 +308,11 @@ const StepIndicator = ({
     switch (getStepStatus(position)) {
       case STEP_STATUS.CURRENT: {
         stepStyle = {
-          backgroundColor: customStyles.stepIndicatorCurrentColor,
+          backgroundColor: customStyles.stepStrokeCurrentColor,
           borderWidth: customStyles.currentStepStrokeWidth,
           borderColor: customStyles.stepStrokeCurrentColor,
-          height: sizeAnim,
-          width: sizeAnim,
+          height: customStyles.circleWidth,
+          width: customStyles.circleWidth,
           borderRadius: borderRadiusAnim,
           overflow: 'hidden',
         };
@@ -329,8 +329,8 @@ const StepIndicator = ({
           backgroundColor: customStyles.stepIndicatorFinishedColor,
           borderWidth: customStyles.stepStrokeWidth,
           borderColor: customStyles.stepStrokeFinishedColor,
-          height: staleSizeAnim,
-          width: staleSizeAnim,
+          height: customStyles.circleWidth,
+          width: customStyles.circleWidth,
           borderRadius: customStyles.stepIndicatorSize / 2,
           overflow: 'hidden',
         };
@@ -347,8 +347,8 @@ const StepIndicator = ({
           backgroundColor: customStyles.stepIndicatorUnFinishedColor,
           borderWidth: customStyles.stepStrokeWidth,
           borderColor: customStyles.stepStrokeUnFinishedColor,
-          height: staleSizeAnim,
-          width: staleSizeAnim,
+          height: customStyles.circleWidth,
+          width: customStyles.circleWidth,
           borderRadius: customStyles.stepIndicatorSize / 2,
           overflow: 'hidden',
         };
@@ -473,3 +473,4 @@ const styles = StyleSheet.create({
 });
 
 export default React.memo(StepIndicator);
+
