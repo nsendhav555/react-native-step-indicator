@@ -278,10 +278,18 @@ export interface StepIndicatorProps {
   /**
    * Labels for each step
    *
-   * @type {string[]}
+   * @type {object[]}
    * @memberof StepIndicatorProps
    */
-  labels?: string[];
+  labels?: object[];
+
+  /**
+   * leftLabel for each step
+   *
+   * @type {object[]}
+   * @memberof StepIndicatorProps
+   */
+  leftLabel?: object[];
 
   /**
    * Callback fired when tapping on a step

@@ -84,11 +84,13 @@ const StepIndicator = ({
   direction = 'horizontal',
   customStyles: customStylesFromProps = defaultStyles,
   labels = [],
+  leftLabel = [],
   onPress,
   renderStepIndicator: renderCustomStepIndicator,
   renderLabel,
 }: StepIndicatorProps) => {
   const [width, setWidth] = React.useState<number>(0);
+  const [mainContainerWidth, setWidthMainSubContainer] = React.useState<number>(0);
   const [height, setHeight] = React.useState<number>(0);
   const [progressBarSize, setProgressBarSize] = React.useState<number>(0);
   const [customStyles, setCustomStyles] = React.useState<
@@ -133,7 +135,7 @@ const StepIndicator = ({
     if (direction === 'vertical') {
       progressBarBackgroundStyle = {
         ...progressBarBackgroundStyle,
-        left: (width - customStyles.separatorStrokeWidth) / 2,
+        left: mainContainerWidth / 2 - 1,
         top: height / (2 * stepCount),
         bottom: height / (2 * stepCount),
         width:
@@ -175,7 +177,7 @@ const StepIndicator = ({
     if (direction === 'vertical') {
       progressBarStyle = {
         ...progressBarStyle,
-        left: (width - customStyles.separatorStrokeWidth) / 2,
+        left: mainContainerWidth / 2 - 1,
         top: height / (2 * stepCount),
         bottom: height / (2 * stepCount),
         width:
@@ -269,18 +271,112 @@ const StepIndicator = ({
                 currentPosition,
               })
             ) : (
-              <Text
-                style={[
-                  styles.stepLabel,
-                  selectedStepLabelStyle,
-                  {
-                    fontSize: customStyles.labelSize,
-                    fontFamily: customStyles.labelFontFamily,
-                  },
-                ]}
-              >
-                {label}
-              </Text>
+              <>
+                <Text
+                  style={[
+                    styles.stepLabel,
+                    selectedStepLabelStyle,
+                    {
+                      fontSize: customStyles.labelSize,
+                      fontFamily: customStyles.labelFontFamily,
+                    },
+                  ]}
+                >
+                  {label.title}
+                </Text>
+                <Text
+                  style={[
+                    styles.stepLabel,
+                    { color: customStyles.labelColor },
+                    {
+                      fontSize: customStyles.labelSize,
+                      fontFamily: customStyles.labelFontFamily,
+                      fontWeight: '400',
+                    },
+                  ]}
+                >
+                  {label.subTitle}
+                </Text>
+              </>
+            )}
+          </View>
+        </TouchableWithoutFeedback>
+      );
+    });
+
+    return (
+      <View
+        style={[
+          styles.stepLabelsContainer,
+          direction === 'vertical'
+            ? { flexDirection: 'column', paddingHorizontal: 4 }
+            : { flexDirection: 'row', paddingVertical: 4 },
+          { alignItems: customStyles.labelAlign },
+        ]}
+      >
+        {labelViews}
+      </View>
+    );
+  };
+
+  const renderStepLeftLabels = () => {
+    if (!leftLabel || leftLabel.length === 0) {
+      return;
+    }
+    var labelViews = leftLabel.map((label, index) => {
+      const selectedStepLabelStyle =
+        index === currentPosition
+          ? { color: customStyles.currentStepLabelColor }
+          : { color: '#4A4A4A' };
+      const selectedStepLabelFontWight =
+        index === currentPosition
+          ? { fontWeight: '700' }
+          : { fontWeight: '500' };
+      return (
+        <TouchableWithoutFeedback
+          style={styles.stepLabelItem}
+          key={index}
+          onPress={() => stepPressed(index)}
+        >
+          <View style={styles.stepLabelItem}>
+            {renderLabel ? (
+              renderLabel({
+                position: index,
+                stepStatus: getStepStatus(index),
+                label,
+                currentPosition,
+              })
+            ) : (
+              <>
+                <Text
+                  style={[
+                    styles.stepLabel,
+                    selectedStepLabelStyle,
+                    selectedStepLabelFontWight,
+                    {
+                      fontSize: customStyles.labelSize,
+                      fontFamily: customStyles.labelFontFamily,
+                      textAlign: 'right',
+                    },
+                  ]}
+                >
+                  {label.title}
+                </Text>
+                <Text
+                  style={[
+                    styles.stepLabel,
+                    { color: customStyles.labelColor },
+                    {
+                      fontSize: customStyles.labelSize,
+                      fontFamily: customStyles.labelFontFamily,
+                      textAlign: 'right',
+                      fontWeight: '400',
+                    },
+                  ]}
+                >
+                  {label.subTitle}
+                </Text>
+              </>
             )}
           </View>
         </TouchableWithoutFeedback>
@@ -417,6 +513,9 @@ const StepIndicator = ({
 
   return (
     <View
+      onLayout={(event) => {
+        setWidthMainSubContainer(event.nativeEvent.layout.width);
+      }}
       style={[
         styles.container,
         direction === 'vertical'
@@ -430,6 +529,8 @@ const StepIndicator = ({
           {renderProgressBar()}
         </React.Fragment>
       )}
+      {leftLabel && renderStepLeftLabels()}
+
       {renderStepIndicator()}
       {labels && renderStepLabels()}
     </View>
@@ -448,6 +549,7 @@ const styles = StyleSheet.create({
   },
   stepLabelsContainer: {
     justifyContent: 'space-around',
+    width: '45%',
   },
   step: {
     alignItems: 'center',
@@ -461,16 +563,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   stepLabel: {
-    fontSize: 12,
-    textAlign: 'center',
-    fontWeight: '500',
+    fontSize: 13,
+    textAlign: 'left',
+    fontWeight: '700',
+    width: '100%',
   },
   stepLabelItem: {
     flex: 1,
+    width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
   },
 });
 
 export default React.memo(StepIndicator);
-
